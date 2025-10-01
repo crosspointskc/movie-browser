@@ -21,6 +21,11 @@ class MovieBrowser {
     async init() {
         await this.loadMoviesFromCSV();
         this.populateFilters();
+        
+        // Make sure all movies are visible initially
+        this.filteredMovies = [...this.movies];
+        console.log(`Loaded ${this.movies.length} movies, displaying ${this.filteredMovies.length}`);
+        
         this.displayMovies();
         
         // Hide loading indicator
@@ -629,6 +634,8 @@ window.onclick = function(event) {
 let movieBrowser;
 document.addEventListener('DOMContentLoaded', () => {
     movieBrowser = new MovieBrowser();
+    window.movieBrowser = movieBrowser; // Make globally accessible
+    console.log('MovieBrowser initialized and made global');
 });
 
 // Service Worker Registration

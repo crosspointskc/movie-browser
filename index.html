@@ -20,6 +20,7 @@
             <div class="header-actions">
                 <button class="mood-btn" onclick="showMoodSelector()">What Should I Watch?</button>
                 <button class="add-btn" onclick="showAddMovie()">+ Add Movie</button>
+                <button class="add-btn" onclick="window.loadPosters()" style="background: #ff6b6b;">🎬 Load Posters</button>
             </div>
         </header>
 
@@ -137,8 +138,16 @@
         // Force set TMDB credentials
         window.TMDB_API_KEY = 'abfe4d2f4da0c7ad40bfbc61fcec05a2';
         window.TMDB_READ_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhYmZlNGQyZjRkYTBjN2FkNDBiZmJjNjFmY2VjMDVhMiIsIm5iZiI6MTc1OTI4OTAwMi4yOSwic3ViIjoiNjhkYzllYWFiZDY2MjAwZmZkMzhjZjUxIiwic2NvcGVzIjpbImFwaV9yZWFkIl0sInZlcnNpb24iOjF9.1tRMcEy_hWof8W_si_5MLCx5tFs-VqYuAsUtsjA0GEs';
-        console.log('TMDB credentials set globally');
+        console.log('TMDB credentials set globally - v2');
+        
+        // Add manual poster loading function to window
+        window.loadPosters = function() {
+            if (window.movieBrowser) {
+                console.log('Manually triggering poster load...');
+                window.movieBrowser.loadPostersForVisibleMovies();
+            }
+        };
     </script>
-    <script src="script.js?v=20251001"></script>
+    <script src="script.js?v=20251002"></script>
 </body>
 </html>
