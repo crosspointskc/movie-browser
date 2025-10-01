@@ -176,11 +176,17 @@ class MovieBrowser {
     }
 
     async loadPostersForVisibleMovies() {
+        // Force refresh credentials from global window
+        this.tmdbApiKey = window.TMDB_API_KEY || this.tmdbApiKey;
+        this.tmdbReadToken = window.TMDB_READ_TOKEN || this.tmdbReadToken;
+        
         console.log('Checking API credentials:', {
             hasApiKey: !!this.tmdbApiKey,
             hasReadToken: !!this.tmdbReadToken,
             apiKey: this.tmdbApiKey ? this.tmdbApiKey.substring(0, 8) + '...' : 'none',
-            readToken: this.tmdbReadToken ? 'present' : 'none'
+            readToken: this.tmdbReadToken ? 'present' : 'none',
+            windowApiKey: !!window.TMDB_API_KEY,
+            windowReadToken: !!window.TMDB_READ_TOKEN
         });
         
         if (!this.tmdbApiKey && !this.tmdbReadToken) {
