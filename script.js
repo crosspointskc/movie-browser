@@ -10,6 +10,11 @@ class MovieBrowser {
         this.tmdbBaseUrl = 'https://api.themoviedb.org/3';
         this.tmdbImageUrl = 'https://image.tmdb.org/t/p/w500';
         
+        console.log('MovieBrowser initialized with TMDB credentials:', {
+            hasApiKey: !!this.tmdbApiKey,
+            hasReadToken: !!this.tmdbReadToken
+        });
+        
         this.init();
     }
 
@@ -164,6 +169,13 @@ class MovieBrowser {
     }
 
     async loadPostersForVisibleMovies() {
+        console.log('Checking API credentials:', {
+            hasApiKey: !!this.tmdbApiKey,
+            hasReadToken: !!this.tmdbReadToken,
+            apiKey: this.tmdbApiKey ? this.tmdbApiKey.substring(0, 8) + '...' : 'none',
+            readToken: this.tmdbReadToken ? 'present' : 'none'
+        });
+        
         if (!this.tmdbApiKey && !this.tmdbReadToken) {
             console.log('TMDB API key not set. Using placeholder posters.');
             return;
