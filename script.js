@@ -43,16 +43,8 @@ class MovieBrowser {
 
     async loadMoviesFromCSV() {
         try {
-            // Try to load from localStorage first
-            const storedMovies = localStorage.getItem('movieCollection');
-            if (storedMovies) {
-                this.movies = JSON.parse(storedMovies);
-                console.log(`Loaded ${this.movies.length} movies from localStorage`);
-                // If localStorage has movies, use them
-                if (this.movies.length > 0) {
-                    return;
-                }
-            }
+            // TEMPORARY: Always load from CSV to fix corruption
+            console.log('Loading movies from CSV file...');
 
             // If no stored data, try to load from CSV
             const response = await fetch('Movies_Complete_Expanded.csv');
