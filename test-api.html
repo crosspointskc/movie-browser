@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TMDB API Test</title>
+</head>
+<body>
+    <h1>Testing TMDB API</h1>
+    <button onclick="testAPI()">Test API Call</button>
+    <div id="result"></div>
+
+    <script>
+        async function testAPI() {
+            const apiKey = 'abfe4d2f4da0c7ad40bfbc61fcec05a2';
+            const bearerToken = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhYmZlNGQyZjRkYTBjN2FkNDBiZmJjNjFmY2VjMDVhMiIsIm5iZiI6MTc1OTI4OTAwMi4yOSwic3ViIjoiNjhkYzllYWFiZDY2MjAwZmZkMzhjZjUxIiwic2NvcGVzIjpbImFwaV9yZWFkIl0sInZlcnNpb24iOjF9.1tRMcEy_hWof8W_si_5MLCx5tFs-VqYuAsUtsjA0GEs';
+            
+            const result = document.getElementById('result');
+            result.innerHTML = 'Testing...';
+            
+            try {
+                // Test 1: API Key method
+                console.log('Testing API Key method...');
+                const url1 = `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=Avatar`;
+                const response1 = await fetch(url1);
+                const data1 = await response1.json();
+                console.log('API Key result:', data1);
+                
+                // Test 2: Bearer Token method
+                console.log('Testing Bearer Token method...');
+                const url2 = 'https://api.themoviedb.org/3/search/movie?query=Avatar';
+                const response2 = await fetch(url2, {
+                    headers: {
+                        'Authorization': `Bearer ${bearerToken}`,
+                        'accept': 'application/json'
+                    }
+                });
+                const data2 = await response2.json();
+                console.log('Bearer Token result:', data2);
+                
+                result.innerHTML = `
+                    <h3>API Key Method:</h3>
+                    <pre>${JSON.stringify(data1, null, 2)}</pre>
+                    <h3>Bearer Token Method:</h3>
+                    <pre>${JSON.stringify(data2, null, 2)}</pre>
+                `;
+                
+            } catch (error) {
+                console.error('Error:', error);
+                result.innerHTML = `Error: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
