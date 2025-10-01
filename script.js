@@ -5,7 +5,7 @@ class MovieBrowser {
         this.filteredMovies = [];
         this.watchHistory = JSON.parse(localStorage.getItem('watchHistory') || '[]');
         this.favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-        this.tmdbApiKey = ''; // You'll need to get this from TMDB
+        this.tmdbApiKey = 'abfe4d2f4da0c7ad40bfbc61fcec05a2';
         this.tmdbBaseUrl = 'https://api.themoviedb.org/3';
         this.tmdbImageUrl = 'https://image.tmdb.org/t/p/w500';
         
