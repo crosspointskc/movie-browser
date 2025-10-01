@@ -6,6 +6,7 @@ class MovieBrowser {
         this.watchHistory = JSON.parse(localStorage.getItem('watchHistory') || '[]');
         this.favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
         this.tmdbApiKey = 'abfe4d2f4da0c7ad40bfbc61fcec05a2';
+        this.tmdbReadToken = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhYmZlNGQyZjRkYTBjN2FkNDBiZmJjNjFmY2VjMDVhMiIsIm5iZiI6MTc1OTI4OTAwMi4yOSwic3ViIjoiNjhkYzllYWFiZDY2MjAwZmZkMzhjZjUxIiwic2NvcGVzIjpbImFwaV9yZWFkIl0sInZlcnNpb24iOjF9.1tRMcEy_hWof8W_si_5MLCx5tFs-VqYuAsUtsjA0GEs';
         this.tmdbBaseUrl = 'https://api.themoviedb.org/3';
         this.tmdbImageUrl = 'https://image.tmdb.org/t/p/w500';
         
@@ -180,11 +181,16 @@ class MovieBrowser {
     }
 
     async fetchMovieDataFromTMDB(movie) {
-        if (!this.tmdbApiKey) return;
+        if (!this.tmdbApiKey && !this.tmdbReadToken) return;
 
         try {
             const searchUrl = `${this.tmdbBaseUrl}/search/movie?api_key=${this.tmdbApiKey}&query=${encodeURIComponent(movie.title)}&year=${movie.year || ''}`;
-            const response = await fetch(searchUrl);
+            const headers = this.tmdbReadToken ? {
+                'Authorization': `Bearer ${this.tmdbReadToken}`,
+                'accept': 'application/json'
+            } : {};
+            
+            const response = await fetch(searchUrl, { headers });
             const data = await response.json();
 
             if (data.results && data.results.length > 0) {
@@ -196,7 +202,7 @@ class MovieBrowser {
 
                 // Get additional details
                 const detailUrl = `${this.tmdbBaseUrl}/movie/${tmdbMovie.id}?api_key=${this.tmdbApiKey}`;
-                const detailResponse = await fetch(detailUrl);
+                const detailResponse = await fetch(detailUrl, { headers });
                 const detailData = await detailResponse.json();
                 movie.runtime = detailData.runtime;
 
@@ -413,14 +419,19 @@ class MovieBrowser {
             return;
         }
 
-        if (!this.tmdbApiKey) {
+        if (!this.tmdbApiKey && !this.tmdbReadToken) {
             alert('TMDB API key not configured. Please add movie manually.');
             return;
         }
 
         try {
             const searchUrl = `${this.tmdbBaseUrl}/search/movie?api_key=${this.tmdbApiKey}&query=${encodeURIComponent(title)}&year=${year}`;
-            const response = await fetch(searchUrl);
+            const headers = this.tmdbReadToken ? {
+                'Authorization': `Bearer ${this.tmdbReadToken}`,
+                'accept': 'application/json'
+            } : {};
+            
+            const response = await fetch(searchUrl, { headers });
             const data = await response.json();
 
             this.displayTMDBResults(data.results || []);
