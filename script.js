@@ -169,11 +169,14 @@ class MovieBrowser {
             return;
         }
 
+        console.log('Loading posters for visible movies...');
+
         // Load posters for first 20 visible movies to avoid API rate limits
         const visibleMovies = this.filteredMovies.slice(0, 20);
         
         for (const movie of visibleMovies) {
             if (!movie.poster && !movie.tmdbId) {
+                console.log(`Fetching data for: ${movie.title}`);
                 await this.fetchMovieDataFromTMDB(movie);
             }
             this.updateMoviePoster(movie);
@@ -182,6 +185,8 @@ class MovieBrowser {
 
     async fetchMovieDataFromTMDB(movie) {
         if (!this.tmdbApiKey && !this.tmdbReadToken) return;
+
+        console.log(`Fetching TMDB data for: ${movie.title} (${movie.year})`);
 
         try {
             let searchUrl, headers = {};
@@ -200,6 +205,8 @@ class MovieBrowser {
             
             const response = await fetch(searchUrl, { headers });
             const data = await response.json();
+
+            console.log(`TMDB search response for ${movie.title}:`, data);
 
             if (data.results && data.results.length > 0) {
                 const tmdbMovie = data.results[0];
@@ -221,9 +228,13 @@ class MovieBrowser {
 
                 // Update localStorage
                 this.saveMoviesToStorage();
+                
+                console.log(`Successfully updated ${movie.title} with poster: ${movie.poster}`);
+            } else {
+                console.log(`No TMDB results found for: ${movie.title}`);
             }
         } catch (error) {
-            console.error('Error fetching TMDB data:', error);
+            console.error(`Error fetching TMDB data for ${movie.title}:`, error);
         }
     }
 
