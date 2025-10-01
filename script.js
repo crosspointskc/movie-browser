@@ -142,8 +142,10 @@ class MovieBrowser {
             grid.appendChild(movieCard);
         });
 
-        // Load posters for visible movies
-        this.loadPostersForVisibleMovies();
+        // Load posters for visible movies automatically
+        setTimeout(() => {
+            this.loadPostersForVisibleMovies();
+        }, 500);
     }
 
     createMovieCard(movie) {
