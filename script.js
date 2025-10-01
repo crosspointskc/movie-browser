@@ -164,7 +164,7 @@ class MovieBrowser {
     }
 
     async loadPostersForVisibleMovies() {
-        if (!this.tmdbApiKey) {
+        if (!this.tmdbApiKey && !this.tmdbReadToken) {
             console.log('TMDB API key not set. Using placeholder posters.');
             return;
         }
@@ -184,11 +184,19 @@ class MovieBrowser {
         if (!this.tmdbApiKey && !this.tmdbReadToken) return;
 
         try {
-            const searchUrl = `${this.tmdbBaseUrl}/search/movie?api_key=${this.tmdbApiKey}&query=${encodeURIComponent(movie.title)}&year=${movie.year || ''}`;
-            const headers = this.tmdbReadToken ? {
-                'Authorization': `Bearer ${this.tmdbReadToken}`,
-                'accept': 'application/json'
-            } : {};
+            let searchUrl, headers = {};
+            
+            if (this.tmdbReadToken) {
+                // Use Bearer token (v4 API style)
+                searchUrl = `${this.tmdbBaseUrl}/search/movie?query=${encodeURIComponent(movie.title)}&year=${movie.year || ''}`;
+                headers = {
+                    'Authorization': `Bearer ${this.tmdbReadToken}`,
+                    'accept': 'application/json'
+                };
+            } else {
+                // Use API key (v3 API style)
+                searchUrl = `${this.tmdbBaseUrl}/search/movie?api_key=${this.tmdbApiKey}&query=${encodeURIComponent(movie.title)}&year=${movie.year || ''}`;
+            }
             
             const response = await fetch(searchUrl, { headers });
             const data = await response.json();
@@ -201,7 +209,12 @@ class MovieBrowser {
                 movie.rating = tmdbMovie.vote_average;
 
                 // Get additional details
-                const detailUrl = `${this.tmdbBaseUrl}/movie/${tmdbMovie.id}?api_key=${this.tmdbApiKey}`;
+                let detailUrl;
+                if (this.tmdbReadToken) {
+                    detailUrl = `${this.tmdbBaseUrl}/movie/${tmdbMovie.id}`;
+                } else {
+                    detailUrl = `${this.tmdbBaseUrl}/movie/${tmdbMovie.id}?api_key=${this.tmdbApiKey}`;
+                }
                 const detailResponse = await fetch(detailUrl, { headers });
                 const detailData = await detailResponse.json();
                 movie.runtime = detailData.runtime;
@@ -425,11 +438,17 @@ class MovieBrowser {
         }
 
         try {
-            const searchUrl = `${this.tmdbBaseUrl}/search/movie?api_key=${this.tmdbApiKey}&query=${encodeURIComponent(title)}&year=${year}`;
-            const headers = this.tmdbReadToken ? {
-                'Authorization': `Bearer ${this.tmdbReadToken}`,
-                'accept': 'application/json'
-            } : {};
+            let searchUrl, headers = {};
+            
+            if (this.tmdbReadToken) {
+                searchUrl = `${this.tmdbBaseUrl}/search/movie?query=${encodeURIComponent(title)}&year=${year}`;
+                headers = {
+                    'Authorization': `Bearer ${this.tmdbReadToken}`,
+                    'accept': 'application/json'
+                };
+            } else {
+                searchUrl = `${this.tmdbBaseUrl}/search/movie?api_key=${this.tmdbApiKey}&query=${encodeURIComponent(title)}&year=${year}`;
+            }
             
             const response = await fetch(searchUrl, { headers });
             const data = await response.json();
