@@ -5,8 +5,8 @@ class MovieBrowser {
         this.filteredMovies = [];
         this.watchHistory = JSON.parse(localStorage.getItem('watchHistory') || '[]');
         this.favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-        this.tmdbApiKey = 'abfe4d2f4da0c7ad40bfbc61fcec05a2';
-        this.tmdbReadToken = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhYmZlNGQyZjRkYTBjN2FkNDBiZmJjNjFmY2VjMDVhMiIsIm5iZiI6MTc1OTI4OTAwMi4yOSwic3ViIjoiNjhkYzllYWFiZDY2MjAwZmZkMzhjZjUxIiwic2NvcGVzIjpbImFwaV9yZWFkIl0sInZlcnNpb24iOjF9.1tRMcEy_hWof8W_si_5MLCx5tFs-VqYuAsUtsjA0GEs';
+        this.tmdbApiKey = window.TMDB_API_KEY || 'abfe4d2f4da0c7ad40bfbc61fcec05a2';
+        this.tmdbReadToken = window.TMDB_READ_TOKEN || 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhYmZlNGQyZjRkYTBjN2FkNDBiZmJjNjFmY2VjMDVhMiIsIm5iZiI6MTc1OTI4OTAwMi4yOSwic3ViIjoiNjhkYzllYWFiZDY2MjAwZmZkMzhjZjUxIiwic2NvcGVzIjpbImFwaV9yZWFkIl0sInZlcnNpb24iOjF9.1tRMcEy_hWof8W_si_5MLCx5tFs-VqYuAsUtsjA0GEs';
         this.tmdbBaseUrl = 'https://api.themoviedb.org/3';
         this.tmdbImageUrl = 'https://image.tmdb.org/t/p/w500';
         
