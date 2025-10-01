@@ -19,12 +19,21 @@ class MovieBrowser {
     }
 
     async init() {
+        console.log('Initializing MovieBrowser...');
+        
         await this.loadMoviesFromCSV();
+        console.log(`After loadMoviesFromCSV: ${this.movies.length} movies loaded`);
+        
+        if (this.movies.length === 0) {
+            console.error('No movies loaded! Using sample data.');
+            this.movies = this.getSampleMovies();
+        }
+        
         this.populateFilters();
         
         // Make sure all movies are visible initially
         this.filteredMovies = [...this.movies];
-        console.log(`Loaded ${this.movies.length} movies, displaying ${this.filteredMovies.length}`);
+        console.log(`Initialized with ${this.movies.length} movies, displaying ${this.filteredMovies.length}`);
         
         this.displayMovies();
         
@@ -38,8 +47,11 @@ class MovieBrowser {
             const storedMovies = localStorage.getItem('movieCollection');
             if (storedMovies) {
                 this.movies = JSON.parse(storedMovies);
-                console.log('Loaded movies from localStorage');
-                return;
+                console.log(`Loaded ${this.movies.length} movies from localStorage`);
+                // If localStorage has movies, use them
+                if (this.movies.length > 0) {
+                    return;
+                }
             }
 
             // If no stored data, try to load from CSV

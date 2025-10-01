@@ -22,6 +22,7 @@
                 <button class="mood-btn" onclick="showMoodSelector()">What Should I Watch?</button>
                 <button class="add-btn" onclick="showAddMovie()">+ Add Movie</button>
                 <button class="add-btn" onclick="window.loadPosters()" style="background: #ff6b6b;">🎬 Load Posters</button>
+                <button class="add-btn" onclick="window.reloadFromCSV()" style="background: #ffa500;">🔄 Reload CSV</button>
             </div>
         </header>
 
@@ -147,6 +148,13 @@
                 console.log('Manually triggering poster load...');
                 window.movieBrowser.loadPostersForVisibleMovies();
             }
+        };
+        
+        // Add function to force reload from CSV
+        window.reloadFromCSV = function() {
+            console.log('Clearing localStorage and reloading from CSV...');
+            localStorage.removeItem('movieCollection');
+            location.reload();
         };
     </script>
     <script src="script.js?v=20251003"></script>
