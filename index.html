@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Movie Collection</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1a1a1a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Movies">
+    <link rel="apple-touch-icon" href="icon-192.png">
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <h1>🎬 My Movies</h1>
+            <div class="header-actions">
+                <button class="mood-btn" onclick="showMoodSelector()">What Should I Watch?</button>
+                <button class="add-btn" onclick="showAddMovie()">+ Add Movie</button>
+            </div>
+        </header>
+
+        <!-- Search and Filter Bar -->
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search movies..." onkeyup="filterMovies()">
+            <select id="genreFilter" onchange="filterMovies()">
+                <option value="">All Genres</option>
+            </select>
+            <select id="yearFilter" onchange="filterMovies()">
+                <option value="">All Years</option>
+            </select>
+        </div>
+
+        <!-- Mood Selector Modal -->
+        <div id="moodModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeMoodSelector()">&times;</span>
+                <h2>What's your mood?</h2>
+                <div class="mood-grid">
+                    <button class="mood-option" onclick="recommendByMood('action')">
+                        ⚡ Action & Adventure
+                        <span>Exciting, fast-paced thrills</span>
+                    </button>
+                    <button class="mood-option" onclick="recommendByMood('relaxing')">
+                        😌 Relaxing
+                        <span>Comedy, romance, feel-good</span>
+                    </button>
+                    <button class="mood-option" onclick="recommendByMood('thoughtful')">
+                        🤔 Thoughtful
+                        <span>Drama, biography, meaningful</span>
+                    </button>
+                    <button class="mood-option" onclick="recommendByMood('escapist')">
+                        🚀 Escapist
+                        <span>Sci-fi, fantasy, other worlds</span>
+                    </button>
+                    <button class="mood-option" onclick="recommendByMood('suspenseful')">
+                        😰 Suspenseful
+                        <span>Thriller, mystery, edge of seat</span>
+                    </button>
+                    <button class="mood-option" onclick="recommendByMood('classic')">
+                        🎭 Classic
+                        <span>Timeless films from the past</span>
+                    </button>
+                    <button class="mood-option" onclick="recommendByMood('short')">
+                        ⏰ Quick Watch
+                        <span>Movies under 2 hours</span>
+                    </button>
+                    <button class="mood-option" onclick="recommendByMood('surprise')">
+                        🎲 Surprise Me!
+                        <span>Random pick from collection</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Movie Modal -->
+        <div id="addMovieModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeAddMovie()">&times;</span>
+                <h2>Add New Movie</h2>
+                <div class="add-movie-form">
+                    <input type="text" id="movieTitle" placeholder="Movie Title">
+                    <input type="number" id="movieYear" placeholder="Year" min="1900" max="2030">
+                    <select id="movieGenre">
+                        <option value="">Select Genre</option>
+                        <option value="Action">Action</option>
+                        <option value="Adventure">Adventure</option>
+                        <option value="Animation">Animation</option>
+                        <option value="Biography">Biography</option>
+                        <option value="Comedy">Comedy</option>
+                        <option value="Crime">Crime</option>
+                        <option value="Documentary">Documentary</option>
+                        <option value="Drama">Drama</option>
+                        <option value="Family">Family</option>
+                        <option value="Fantasy">Fantasy</option>
+                        <option value="Historical">Historical</option>
+                        <option value="Musical">Musical</option>
+                        <option value="Romance">Romance</option>
+                        <option value="Sci-Fi">Sci-Fi</option>
+                        <option value="Thriller">Thriller</option>
+                        <option value="TV Series">TV Series</option>
+                        <option value="War">War</option>
+                    </select>
+                    <input type="text" id="movieQuality" placeholder="Quality (e.g., 1080p, 720p)">
+                    <div class="form-actions">
+                        <button onclick="searchTMDB()">Search & Add</button>
+                        <button onclick="addMovieManually()">Add Manually</button>
+                    </div>
+                </div>
+                <div id="tmdbResults"></div>
+            </div>
+        </div>
+
+        <!-- Movie Detail Modal -->
+        <div id="movieModal" class="modal">
+            <div class="modal-content movie-detail">
+                <span class="close" onclick="closeMovieDetail()">&times;</span>
+                <div id="movieDetailContent"></div>
+            </div>
+        </div>
+
+        <!-- Movies Grid -->
+        <div class="movies-container">
+            <div id="moviesGrid" class="movies-grid">
+                <!-- Movies will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Loading indicator -->
+        <div id="loading" class="loading">Loading your movie collection...</div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

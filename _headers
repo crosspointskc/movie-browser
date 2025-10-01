@@ -1,0 +1,31 @@
+# Cloudflare Headers for PWA
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  X-XSS-Protection: 1; mode=block
+  Referrer-Policy: strict-origin-when-cross-origin
+  
+# PWA specific headers
+/manifest.json
+  Content-Type: application/manifest+json
+  
+/sw.js
+  Content-Type: application/javascript
+  Service-Worker-Allowed: /
+  
+# Cache static assets
+/styles.css
+  Cache-Control: public, max-age=31536000
+  
+/script.js
+  Cache-Control: public, max-age=86400
+  
+# Movie posters and images
+*.jpg
+  Cache-Control: public, max-age=31536000
+  
+*.png  
+  Cache-Control: public, max-age=31536000
+  
+*.webp
+  Cache-Control: public, max-age=31536000
