@@ -43,20 +43,32 @@ class MovieBrowser {
 
     async loadMoviesFromCSV() {
         try {
-            // TEMPORARY: Always load from CSV to fix corruption
-            console.log('Loading movies from CSV file...');
-
-            // If no stored data, try to load from CSV
-            const response = await fetch('Movies_Complete_Expanded.csv');
-            const csvText = await response.text();
-            this.movies = this.parseCSV(csvText);
-            
-            // Store in localStorage for future use
-            localStorage.setItem('movieCollection', JSON.stringify(this.movies));
-            console.log('Loaded movies from CSV and saved to localStorage');
+            // Use embedded movie data
+            if (window.MOVIE_DATA && window.MOVIE_DATA.length > 0) {
+                console.log(`Loading ${window.MOVIE_DATA.length} movies from embedded data...`);
+                
+                this.movies = window.MOVIE_DATA.map((movie, index) => ({
+                    id: index + 1,
+                    title: movie.title,
+                    year: movie.year,
+                    quality: movie.quality || '',
+                    genre: movie.genre || 'Unknown',
+                    poster: null,
+                    overview: '',
+                    tmdbId: null,
+                    runtime: null,
+                    rating: null,
+                    watched: this.watchHistory.includes(index + 1),
+                    favorite: this.favorites.includes(index + 1)
+                }));
+                
+                console.log(`Successfully loaded ${this.movies.length} movies from embedded data`);
+            } else {
+                console.error('No embedded movie data found!');
+                this.movies = this.getSampleMovies();
+            }
         } catch (error) {
             console.error('Error loading movies:', error);
-            // Fallback: use sample data if CSV can't be loaded
             this.movies = this.getSampleMovies();
         }
         
