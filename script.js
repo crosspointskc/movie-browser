@@ -158,12 +158,20 @@ class MovieBrowser {
 
     displayMovies() {
         const grid = document.getElementById('moviesGrid');
+        if (!grid) {
+            console.error('CRITICAL: moviesGrid element not found!');
+            return;
+        }
+
+        console.log(`Displaying ${this.filteredMovies.length} movies...`);
         grid.innerHTML = '';
 
         this.filteredMovies.forEach(movie => {
             const movieCard = this.createMovieCard(movie);
             grid.appendChild(movieCard);
         });
+
+        console.log(`✅ Successfully displayed ${this.filteredMovies.length} movie cards`);
 
         // Load posters for visible movies automatically
         setTimeout(() => {
