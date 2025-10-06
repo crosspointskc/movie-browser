@@ -387,9 +387,13 @@ class MovieBrowser {
 
         // Pick random recommendation
         const randomMovie = recommendations[Math.floor(Math.random() * recommendations.length)];
-        
-        this.closeMoodSelector();
+
+        closeMoodSelector();
         this.showMovieDetail(randomMovie, true);
+    }
+
+    closeMoodSelector() {
+        document.getElementById('moodModal').style.display = 'none';
     }
 
     getRecentlyWatched() {
@@ -662,6 +666,63 @@ function searchTMDB() {
 
 function addMovieManually() {
     movieBrowser.addMovieManually();
+}
+
+function showUploadCSV() {
+    document.getElementById('uploadCSVModal').style.display = 'block';
+    document.getElementById('uploadStatus').innerHTML = '';
+}
+
+function closeUploadCSV() {
+    document.getElementById('uploadCSVModal').style.display = 'none';
+}
+
+function uploadCSV() {
+    const fileInput = document.getElementById('csvFile');
+    const statusDiv = document.getElementById('uploadStatus');
+
+    if (!fileInput.files || fileInput.files.length === 0) {
+        statusDiv.innerHTML = '<span style="color: #ff6b6b;">Please select a CSV file</span>';
+        return;
+    }
+
+    const file = fileInput.files[0];
+    const reader = new FileReader();
+
+    reader.onload = function(e) {
+        try {
+            const csvText = e.target.result;
+            const movies = movieBrowser.parseCSV(csvText);
+
+            if (movies.length === 0) {
+                statusDiv.innerHTML = '<span style="color: #ff6b6b;">No valid movies found in CSV</span>';
+                return;
+            }
+
+            // Update movie data
+            movieBrowser.movies = movies;
+            movieBrowser.filteredMovies = [...movies];
+            movieBrowser.saveMoviesToStorage();
+            movieBrowser.populateFilters();
+            movieBrowser.displayMovies();
+
+            statusDiv.innerHTML = `<span style="color: #4ecdc4;">✅ Successfully loaded ${movies.length} movies!</span>`;
+
+            setTimeout(() => {
+                closeUploadCSV();
+            }, 2000);
+
+        } catch (error) {
+            console.error('Error parsing CSV:', error);
+            statusDiv.innerHTML = '<span style="color: #ff6b6b;">Error parsing CSV file. Please check format.</span>';
+        }
+    };
+
+    reader.onerror = function() {
+        statusDiv.innerHTML = '<span style="color: #ff6b6b;">Error reading file</span>';
+    };
+
+    reader.readAsText(file);
 }
 
 // Close modals when clicking outside

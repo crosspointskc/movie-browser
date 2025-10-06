@@ -21,8 +21,8 @@
             <div class="header-actions">
                 <button class="mood-btn" onclick="showMoodSelector()">What Should I Watch?</button>
                 <button class="add-btn" onclick="showAddMovie()">+ Add Movie</button>
+                <button class="add-btn" onclick="showUploadCSV()" style="background: #4ecdc4;">📤 Upload CSV</button>
                 <button class="add-btn" onclick="window.loadPosters()" style="background: #ff6b6b;">🎬 Load Posters</button>
-                <button class="add-btn" onclick="window.reloadFromCSV()" style="background: #ffa500;">🔄 Reload CSV</button>
             </div>
         </header>
 
@@ -114,6 +114,22 @@
                     </div>
                 </div>
                 <div id="tmdbResults"></div>
+            </div>
+        </div>
+
+        <!-- Upload CSV Modal -->
+        <div id="uploadCSVModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeUploadCSV()">&times;</span>
+                <h2>Upload New Movie CSV</h2>
+                <div class="upload-csv-form">
+                    <p>Upload a CSV file with your movie collection. Format: Title, Year, Quality, Genre</p>
+                    <input type="file" id="csvFile" accept=".csv">
+                    <div class="form-actions">
+                        <button onclick="uploadCSV()">Upload and Replace</button>
+                    </div>
+                    <div id="uploadStatus" style="margin-top: 10px; color: #4ecdc4;"></div>
+                </div>
             </div>
         </div>
 
