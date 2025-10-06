@@ -173,10 +173,37 @@ class MovieBrowser {
             return titleA.localeCompare(titleB);
         });
 
+        // Group movies by first letter
+        const moviesByLetter = {};
         sortedMovies.forEach(movie => {
-            const movieCard = this.createMovieCard(movie);
-            grid.appendChild(movieCard);
+            const title = movie.title.replace(/^(the|a|an)\s+/i, '');
+            const firstLetter = title.charAt(0).toUpperCase();
+            const letter = /[A-Z]/.test(firstLetter) ? firstLetter : '#';
+
+            if (!moviesByLetter[letter]) {
+                moviesByLetter[letter] = [];
+            }
+            moviesByLetter[letter].push(movie);
         });
+
+        // Display movies with section headers
+        Object.keys(moviesByLetter).sort().forEach(letter => {
+            // Add section header
+            const header = document.createElement('div');
+            header.className = 'section-header';
+            header.id = `section-${letter}`;
+            header.textContent = letter;
+            grid.appendChild(header);
+
+            // Add movies in this section
+            moviesByLetter[letter].forEach(movie => {
+                const movieCard = this.createMovieCard(movie);
+                grid.appendChild(movieCard);
+            });
+        });
+
+        // Create alphabet index
+        this.createAlphabetIndex(Object.keys(moviesByLetter).sort());
 
         console.log(`✅ Successfully displayed ${sortedMovies.length} movie cards (alphabetically sorted)`);
 
@@ -184,6 +211,35 @@ class MovieBrowser {
         setTimeout(() => {
             this.loadPostersForVisibleMovies();
         }, 500);
+    }
+
+    createAlphabetIndex(availableLetters) {
+        const indexContainer = document.getElementById('alphabetIndex');
+        if (!indexContainer) return;
+
+        indexContainer.innerHTML = '';
+        const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ#'.split('');
+
+        alphabet.forEach(letter => {
+            const link = document.createElement('a');
+            link.textContent = letter;
+            link.href = `#section-${letter}`;
+
+            if (!availableLetters.includes(letter)) {
+                link.style.opacity = '0.2';
+                link.style.pointerEvents = 'none';
+            }
+
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const section = document.getElementById(`section-${letter}`);
+                if (section) {
+                    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+
+            indexContainer.appendChild(link);
+        });
     }
 
     createMovieCard(movie) {

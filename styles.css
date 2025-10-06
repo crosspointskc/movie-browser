@@ -88,23 +88,40 @@ body {
 }
 
 /* Movies Grid - List Style */
+.movies-container {
+    position: relative;
+}
+
 .movies-grid {
     display: flex;
     flex-direction: column;
-    gap: 1px;
+    gap: 0;
     padding: 0;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 15px;
-    overflow: hidden;
+    background: transparent;
+    border-radius: 0;
+}
+
+/* Alphabetical Section Headers */
+.section-header {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 8px 15px;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.5);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    backdrop-filter: blur(10px);
 }
 
 .movie-card {
-    background: rgba(255, 255, 255, 0.08);
+    background: transparent;
     padding: 12px 15px;
     cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
-    backdrop-filter: blur(10px);
+    transition: background 0.2s;
+    backdrop-filter: none;
     border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     display: flex;
     align-items: center;
     gap: 15px;
@@ -112,8 +129,7 @@ body {
 }
 
 .movie-card:hover {
-    background: rgba(255, 255, 255, 0.15);
-    transform: translateX(5px);
+    background: rgba(255, 255, 255, 0.08);
 }
 
 .movie-poster {
@@ -173,6 +189,42 @@ body {
     font-size: 0.75rem;
     display: inline-block;
     font-weight: 500;
+}
+
+/* Alphabet Index */
+.alphabet-index {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    z-index: 100;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 8px 6px;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+}
+
+.alphabet-index a {
+    color: rgba(255, 255, 255, 0.5);
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 6px;
+    text-align: center;
+    transition: color 0.2s, transform 0.2s;
+    cursor: pointer;
+}
+
+.alphabet-index a:hover {
+    color: #ff6b6b;
+    transform: scale(1.2);
+}
+
+.alphabet-index a.active {
+    color: #4ecdc4;
 }
 
 /* Modal Styles */
