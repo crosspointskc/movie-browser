@@ -136,14 +136,16 @@
         <div id="loading" class="loading">Loading your movie collection...</div>
     </div>
 
-    <script src="movie_data.js"></script>
     <script>
-        // Force set TMDB credentials
+        // Force set TMDB credentials BEFORE loading other scripts
         window.TMDB_API_KEY = 'abfe4d2f4da0c7ad40bfbc61fcec05a2';
         window.TMDB_READ_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhYmZlNGQyZjRkYTBjN2FkNDBiZmJjNjFmY2VjMDVhMiIsIm5iZiI6MTc1OTI4OTAwMi4yOSwic3ViIjoiNjhkYzllYWFiZDY2MjAwZmZkMzhjZjUxIiwic2NvcGVzIjpbImFwaV9yZWFkIl0sInZlcnNpb24iOjF9.1tRMcEy_hWof8W_si_5MLCx5tFs-VqYuAsUtsjA0GEs';
-        console.log('TMDB credentials set globally - v3');
+        console.log('TMDB credentials set globally');
+    </script>
+    <script src="movie_data.js"></script>
+    <script>
         console.log('Movie data loaded:', window.MOVIE_DATA ? window.MOVIE_DATA.length + ' movies' : 'NO DATA');
-        
+
         // Add manual poster loading function to window
         window.loadPosters = function() {
             if (window.movieBrowser) {
@@ -151,7 +153,7 @@
                 window.movieBrowser.loadPostersForVisibleMovies();
             }
         };
-        
+
         // Add function to force reload from CSV
         window.reloadFromCSV = function() {
             console.log('Clearing localStorage and reloading from CSV...');
@@ -159,6 +161,6 @@
             location.reload();
         };
     </script>
-    <script src="script.js?v=20251005"></script>
+    <script src="script.js?v=20251007"></script>
 </body>
 </html>

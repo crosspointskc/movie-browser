@@ -43,35 +43,37 @@ class MovieBrowser {
 
     async loadMoviesFromCSV() {
         try {
-            // Use embedded movie data
-            if (window.MOVIE_DATA && window.MOVIE_DATA.length > 0) {
-                console.log(`Loading ${window.MOVIE_DATA.length} movies from embedded data...`);
-                
-                this.movies = window.MOVIE_DATA.map((movie, index) => ({
-                    id: index + 1,
-                    title: movie.title,
-                    year: movie.year,
-                    quality: movie.quality || '',
-                    genre: movie.genre || 'Unknown',
-                    poster: null,
-                    overview: '',
-                    tmdbId: null,
-                    runtime: null,
-                    rating: null,
-                    watched: this.watchHistory.includes(index + 1),
-                    favorite: this.favorites.includes(index + 1)
-                }));
-                
-                console.log(`Successfully loaded ${this.movies.length} movies from embedded data`);
-            } else {
+            // Check for embedded movie data (should be available immediately)
+            if (!window.MOVIE_DATA || window.MOVIE_DATA.length === 0) {
                 console.error('No embedded movie data found!');
                 this.movies = this.getSampleMovies();
+                this.filteredMovies = [...this.movies];
+                return;
             }
+
+            console.log(`Loading ${window.MOVIE_DATA.length} movies from embedded data...`);
+
+            this.movies = window.MOVIE_DATA.map((movie, index) => ({
+                id: index + 1,
+                title: movie.title,
+                year: movie.year,
+                quality: movie.quality || '',
+                genre: movie.genre || 'Unknown',
+                poster: null,
+                overview: '',
+                tmdbId: null,
+                runtime: null,
+                rating: null,
+                watched: this.watchHistory.includes(index + 1),
+                favorite: this.favorites.includes(index + 1)
+            }));
+
+            console.log(`Successfully loaded ${this.movies.length} movies from embedded data`);
         } catch (error) {
             console.error('Error loading movies:', error);
             this.movies = this.getSampleMovies();
         }
-        
+
         this.filteredMovies = [...this.movies];
     }
 
@@ -195,7 +197,7 @@ class MovieBrowser {
         // Force refresh credentials from global window
         this.tmdbApiKey = window.TMDB_API_KEY || this.tmdbApiKey;
         this.tmdbReadToken = window.TMDB_READ_TOKEN || this.tmdbReadToken;
-        
+
         console.log('Checking API credentials:', {
             hasApiKey: !!this.tmdbApiKey,
             hasReadToken: !!this.tmdbReadToken,
@@ -204,7 +206,7 @@ class MovieBrowser {
             windowApiKey: !!window.TMDB_API_KEY,
             windowReadToken: !!window.TMDB_READ_TOKEN
         });
-        
+
         if (!this.tmdbApiKey && !this.tmdbReadToken) {
             console.log('TMDB API key not set. Using placeholder posters.');
             return;
@@ -214,11 +216,13 @@ class MovieBrowser {
 
         // Load posters for first 20 visible movies to avoid API rate limits
         const visibleMovies = this.filteredMovies.slice(0, 20);
-        
+
         for (const movie of visibleMovies) {
             if (!movie.poster && !movie.tmdbId) {
                 console.log(`Fetching data for: ${movie.title}`);
                 await this.fetchMovieDataFromTMDB(movie);
+                // Add small delay to avoid rate limiting
+                await new Promise(resolve => setTimeout(resolve, 250));
             }
             this.updateMoviePoster(movie);
         }
@@ -231,7 +235,7 @@ class MovieBrowser {
 
         try {
             let searchUrl, headers = {};
-            
+
             if (this.tmdbReadToken) {
                 // Use Bearer token (v4 API style)
                 searchUrl = `${this.tmdbBaseUrl}/search/movie?query=${encodeURIComponent(movie.title)}&year=${movie.year || ''}`;
@@ -243,11 +247,15 @@ class MovieBrowser {
                 // Use API key (v3 API style)
                 searchUrl = `${this.tmdbBaseUrl}/search/movie?api_key=${this.tmdbApiKey}&query=${encodeURIComponent(movie.title)}&year=${movie.year || ''}`;
             }
-            
-            const response = await fetch(searchUrl, { headers });
-            const data = await response.json();
 
-            console.log(`TMDB search response for ${movie.title}:`, data);
+            const response = await fetch(searchUrl, { headers });
+
+            if (!response.ok) {
+                console.error(`TMDB API error: ${response.status} ${response.statusText}`);
+                return;
+            }
+
+            const data = await response.json();
 
             if (data.results && data.results.length > 0) {
                 const tmdbMovie = data.results[0];
@@ -257,20 +265,26 @@ class MovieBrowser {
                 movie.rating = tmdbMovie.vote_average;
 
                 // Get additional details
-                let detailUrl;
-                if (this.tmdbReadToken) {
-                    detailUrl = `${this.tmdbBaseUrl}/movie/${tmdbMovie.id}`;
-                } else {
-                    detailUrl = `${this.tmdbBaseUrl}/movie/${tmdbMovie.id}?api_key=${this.tmdbApiKey}`;
+                try {
+                    let detailUrl;
+                    if (this.tmdbReadToken) {
+                        detailUrl = `${this.tmdbBaseUrl}/movie/${tmdbMovie.id}`;
+                    } else {
+                        detailUrl = `${this.tmdbBaseUrl}/movie/${tmdbMovie.id}?api_key=${this.tmdbApiKey}`;
+                    }
+                    const detailResponse = await fetch(detailUrl, { headers });
+                    if (detailResponse.ok) {
+                        const detailData = await detailResponse.json();
+                        movie.runtime = detailData.runtime;
+                    }
+                } catch (detailError) {
+                    console.warn(`Could not fetch details for ${movie.title}:`, detailError);
                 }
-                const detailResponse = await fetch(detailUrl, { headers });
-                const detailData = await detailResponse.json();
-                movie.runtime = detailData.runtime;
 
                 // Update localStorage
                 this.saveMoviesToStorage();
-                
-                console.log(`Successfully updated ${movie.title} with poster: ${movie.poster}`);
+
+                console.log(`Successfully updated ${movie.title} with poster: ${movie.poster ? 'yes' : 'no'}`);
             } else {
                 console.log(`No TMDB results found for: ${movie.title}`);
             }
