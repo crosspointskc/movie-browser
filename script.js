@@ -166,12 +166,19 @@ class MovieBrowser {
         console.log(`Displaying ${this.filteredMovies.length} movies...`);
         grid.innerHTML = '';
 
-        this.filteredMovies.forEach(movie => {
+        // Sort movies alphabetically by title
+        const sortedMovies = [...this.filteredMovies].sort((a, b) => {
+            const titleA = a.title.toLowerCase().replace(/^(the|a|an)\s+/, '');
+            const titleB = b.title.toLowerCase().replace(/^(the|a|an)\s+/, '');
+            return titleA.localeCompare(titleB);
+        });
+
+        sortedMovies.forEach(movie => {
             const movieCard = this.createMovieCard(movie);
             grid.appendChild(movieCard);
         });
 
-        console.log(`✅ Successfully displayed ${this.filteredMovies.length} movie cards`);
+        console.log(`✅ Successfully displayed ${sortedMovies.length} movie cards (alphabetically sorted)`);
 
         // Load posters for visible movies automatically
         setTimeout(() => {
@@ -192,9 +199,9 @@ class MovieBrowser {
                 <h3>${movie.title}</h3>
                 <div class="movie-meta">
                     <span>${movie.year || 'Unknown'}</span>
-                    <span>${movie.quality || ''}</span>
+                    ${movie.quality ? `<span>${movie.quality}</span>` : ''}
+                    <span class="movie-genre">${movie.genre}</span>
                 </div>
-                <div class="movie-genre">${movie.genre}</div>
             </div>
         `;
 
