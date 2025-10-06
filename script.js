@@ -234,7 +234,12 @@ class MovieBrowser {
                 e.preventDefault();
                 const section = document.getElementById(`section-${letter}`);
                 if (section) {
-                    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    // Get the section position and scroll with offset
+                    const offsetTop = section.offsetTop - 100; // Offset for header
+                    window.scrollTo({
+                        top: offsetTop,
+                        behavior: 'smooth'
+                    });
                 }
             });
 
